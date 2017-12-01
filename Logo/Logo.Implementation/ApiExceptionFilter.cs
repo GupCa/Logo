@@ -1,7 +1,4 @@
- 
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Logo.Contracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -26,11 +23,8 @@ namespace Logo.Implementation
             {
                 var ex = context.Exception as ApiException;
                 context.Exception = null;
-                apiError = new ApiError(ex.Message);
-                //apiError.errors = ex.Errors;
-
-                context.HttpContext.Response.StatusCode = ex.StatusCode;
-                
+                apiError = new ApiError(ex.Message);                
+                context.HttpContext.Response.StatusCode = ex.StatusCode;               
                 _logger.LogWarning($"Application thrown error: {ex.Message}", ex);
             }
 
@@ -39,13 +33,11 @@ namespace Logo.Implementation
                 apiError = new ApiError("Unauthorized Access");
                 context.HttpContext.Response.StatusCode = 401;
                 _logger.LogWarning("Unauthorized Access in Controller Filter.");
-                // handle logging here
+               
             }
+
             else
-            {
-                // Unhandled errors
-           
-                
+            {                              
                 #if !DEBUG
                 var msg = "An unhandled error occurred.";                
                 string stack = null;
@@ -61,17 +53,12 @@ namespace Logo.Implementation
 
                 context.HttpContext.Response.StatusCode = 500;
 
-                _logger.LogError(new EventId(0), context.Exception, msg);
-               
+                _logger.LogError(new EventId(0), context.Exception, msg);               
             }
-
             // always return a JSON result
             context.Result = new JsonResult(apiError);
 
             base.OnException(context);
         }
-
-
-
     }
 }

@@ -14,29 +14,18 @@ using System.IO.Compression;
 namespace Logo.Implementation
 {
     public class FilesService : IFilesService
-    {
-
-        //private readonly IFoldersService _foldersService;
-
-        public FilesService()
-        {
-           // _foldersService = foldersService;
-        }
-
-
+    {       
         public async Task<byte[]> SimpleDownloadAsync(string fileName)
         {
             var container = await GetContainerReference();
             var blockBlob = container.GetBlockBlobReference(fileName);
-
+            
             var ms = new MemoryStream();
 
             await blockBlob.DownloadToStreamAsync(ms);
 
             return ms.ToArray();
         }
-
-
 
         public async Task<Stream> SimpleDownloadStreamAsync(string fileName)
         {
@@ -50,19 +39,23 @@ namespace Logo.Implementation
             return ms;
         }
 
-
-
-
         public async Task SimpleUploadStreamAsync(LoadedFileBack loadedFileBack)
         {
-            //loadedFileBack.Stream.Position = 0;
             var container = await GetContainerReference();
             var blockBlob = container.GetBlockBlobReference(loadedFileBack.FileNameInBlob.ToString());
 
             await blockBlob.UploadFromStreamAsync(loadedFileBack.Stream);
         }
 
-        
+        public async  Task DeleteFileFromBlob(string fileName)
+        {
+            var container = await GetContainerReference();
+            var blockBlob = container.GetBlockBlobReference(fileName);
+
+             await blockBlob.DeleteIfExistsAsync();
+        }
+
+
         /*
         public async Task CreateZipFile()
         {
@@ -72,10 +65,7 @@ namespace Logo.Implementation
                 "13d9322a-6e32-429e-b76d-1f6ef02482fe"
             };
 
-            //IEnumerable <byte[]> list =  await DownloadFiles(files);
-
-            
-           
+            //IEnumerable <byte[]> list =  await DownloadFiles(files);          
         }*/
 
         public async Task<IEnumerable<byte[]>> DownloadFiles(IEnumerable<Contracts.FileInfo> files)
@@ -106,16 +96,12 @@ namespace Logo.Implementation
 
                 tasks.Add(Task.Run(async () =>
                 {
-                    //Stream fileStream = File.OpenRead(fileName);
                     await blockBlob.UploadFromStreamAsync(file.Stream);
 
                 }));
             }
-
             await Task.WhenAll(tasks);
         }
-
-
 
         private async Task<CloudBlobContainer> GetContainerReference()
         {
@@ -127,6 +113,7 @@ namespace Logo.Implementation
             await container.CreateIfNotExistsAsync();
             return container;
         }
+
 
         public byte[] ResizeImage(Stream input)
         {
@@ -153,6 +140,5 @@ namespace Logo.Implementation
             }
             return resizedImage;
         }
-
     }
 }
