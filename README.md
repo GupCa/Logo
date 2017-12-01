@@ -1,5 +1,15 @@
 # Logo
-LOGO Project using ASP.NET Core 2.0 WEB.API + Angular 4 http://logo-app.azurewebsites.net
+LOGO Project using ASP.NET Core 2.0.2 WEB.API + Angular 4.4.6 https://logo-app.azurewebsites.net
+
+![alt text](https://raw.githubusercontent.com/GupCa/Logo/master/TitleGrid.png)
+
+![alt text](https://raw.githubusercontent.com/GupCa/Logo/master/TitleList.png)
+
+User with already uploaded files: 
+
+email: anntytova@gmail.com;
+password: qwerty
+
 
 To install run this:
 ``` npm
