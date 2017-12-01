@@ -4,7 +4,10 @@
 *.pubxml
 *.pubxml.user
 *.publish.xml
+*.dbmdl
+*.jfm
 [Bb]in/
 [Oo]bj/
 .idea/
 .vs/
+*.txt

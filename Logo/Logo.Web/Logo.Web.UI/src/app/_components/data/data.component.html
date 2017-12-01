@@ -1,0 +1,516 @@
+<app-menu [folderId]="folderId" (toggleGridEvent)="toggleGrid($event)" (toggleSearchEvent)="search($event)" (refreshEvent)="this.ngOnInit()"
+  (sortEvent)="sort($event)"></app-menu>
+<div class="placefornav">
+
+</div>
+
+
+<div class="col-sm-10 container-for-ff">
+  <div *ngIf="grid">
+    <div *ngIf="folders?.length > 0">
+      <div class="title-f">Папки</div>
+      <div class="row">
+        <div class="col-xs-3" *ngFor="let folder of folders">
+          <button class="folder-grid" [contextMenu]="static" (dblclick)="moveToSelectedFolder(folder.folderId, folder.name)" e>
+            <div class="folder-grid-item">
+              <div class="for-inline">
+                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                  viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="img-folder">
+                  <g>
+                    <path class="st0" d="M119.5,200.5c-2.2,0-4.1,1.5-4.7,3.6L17.1,448v8.5c0,6.3-0.4,8.5,4.8,8.5h381.9c9.9,0,18.6-6.6,20.9-15.5
+                     L512,209.1c0,0,0-5.3,0-8.5H119.5z" />
+                    <path class="st0" d="M108.6,183.5h343.6h8.5V130c0-12.9-10.5-23.3-23.3-23.3H226.3l-42.7-59.7H23.3C10.5,46.9,0,57.4,0,70.2v356.7
+                     l87.7-228C90.1,190.1,98.8,183.5,108.6,183.5z" />
+                  </g>
+                </svg>
+              </div>
+              <div class="for-inline">{{folder.name}}</div>
+            </div>
+
+            <button id="openRenameFolderModalButton" hidden="true" data-toggle="modal" data-target="#renameFolderModal">Переименовать</button>
+            <button id="openAddTagFolderModalButton" hidden="true" data-toggle="modal" data-target="#addTagFolderModal">Добавить тег</button>
+            <button id="openDeleteFolderModalButton" hidden="true" data-toggle="modal" data-target="#deleteFolderModal">Удалить папку</button>
+            <context-menu #static>
+              <ng-template contextMenuItem (execute)="openRenameFolderModal(folder.folderId)">
+                Переименовать
+              </ng-template>
+              <ng-template contextMenuItem (execute)="openAddTagFolderModal(folder.folderId)">
+                Добавить тег
+              </ng-template>
+              <ng-template contextMenuItem (execute)="callDownloadZIP(folder.folderId)">
+                Скачать ZIP-архив
+              </ng-template>
+              <ng-template contextMenuItem (execute)="openDeleteFolderModal(folder.folderId)">
+                Удалить папку
+              </ng-template>
+            </context-menu>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf="files?.length > 0">
+      <div class="title-f">Файлы</div>
+      <div class="row">
+        <div class="col-xs-3" *ngFor="let file of files">
+          <button class="thumbnail" class="folder-grid" [contextMenu]="static" style="padding: 0">
+            <div (click)="openImage(file.fileId)">
+              <img *ngIf="file.resizedImage" [src]="sanitize(file.resizedImage)" />
+              <div class="folder-grid-item">
+                <div class="for-inline">
+                  <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="img-folder">
+                    <path class="st0" d="M503.2,53H8.8C4,53,0,56.9,0,61.8v388.4c0,4.9,4,8.8,8.8,8.8h494.3c4.9,0,8.8-3.9,8.8-8.8V61.8
+                         C512,56.9,508,53,503.2,53z M141.2,150.1c27.1,0,49.2,22.1,49.2,49.2c0,27.1-22.1,49.2-49.2,49.2s-49.2-22.1-49.2-49.2
+                         C92.1,172.1,114.1,150.1,141.2,150.1z M465.5,314.9c-3.3,3.6-8.9,3.8-12.5,0.5l-99.4-91.1l-81,88.8l42.4,42.4c3.5,3.5,3.5,9,0,12.5
+                         c-3.5,3.5-9,3.5-12.5,0l-90.9-90.9l-144,126.8c-1.7,1.5-3.8,2.2-5.8,2.2c-2.4,0-4.9-1-6.6-3c-3.2-3.7-2.9-9.2,0.8-12.5l150.2-132.3
+                         c3.5-3.1,8.8-2.9,12.1,0.4l41.9,41.9l86.5-94.7c1.6-1.7,3.8-2.8,6.1-2.9c2.3-0.1,4.6,0.7,6.4,2.3L465,302.5
+                         C468.6,305.8,468.8,311.3,465.5,314.9z" />
+                  </svg>
+                </div>
+                <div class="for-inline">{{file.name}}</div>
+              </div>
+            </div>
+            <button id="openRenameFileModalButton" hidden="true" data-toggle="modal" data-target="#renameFileModal">Переименовать</button>
+            <button id="openAddTagFileModalButton" hidden="true" data-toggle="modal" data-target="#addTagFileModal">Добавить тег</button>
+            <button id="openDeleteFileModalButton" hidden="true" data-toggle="modal" data-target="#deleteFileModal">Удалить файл</button>
+            <context-menu #static>
+              <ng-template contextMenuItem (execute)="openRenameFileModal(file.fileId)">
+                Переименовать
+              </ng-template>
+              <ng-template contextMenuItem (execute)="openAddTagFileModal(file.fileId)">
+                Добавить тег
+              </ng-template>
+              <ng-template contextMenuItem (execute)="callDownload(file.fileId)">
+                Скачать файл
+              </ng-template>
+              <ng-template contextMenuItem (execute)="openDeleteFileModal(file.fileId)">
+                Удалить файл
+              </ng-template>
+            </context-menu>
+
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="!grid">
+    <div *ngIf="folders?.length > 0 || files?.length > 0">
+      <div class="col-sm-9 just-for-padding">
+        <div class="title-f">Название</div>
+      </div>
+      <div class="col-sm-3">
+        <div class="title-f">Теги</div>
+      </div>
+      <button class="folder-grid col-sm-12 " *ngFor="let folder of folders">
+        <div [contextMenu]="static" (dblclick)="moveToSelectedFolder(folder.folderId, folder.name)">
+          <div class="col-sm-9 just-for-padding">
+            <div class="folder-grid-item">
+              <div class="for-inline">
+                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                  viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="img-folder">
+                  <g>
+                    <path class="st0" d="M119.5,200.5c-2.2,0-4.1,1.5-4.7,3.6L17.1,448v8.5c0,6.3-0.4,8.5,4.8,8.5h381.9c9.9,0,18.6-6.6,20.9-15.5
+                         L512,209.1c0,0,0-5.3,0-8.5H119.5z" />
+                    <path class="st0" d="M108.6,183.5h343.6h8.5V130c0-12.9-10.5-23.3-23.3-23.3H226.3l-42.7-59.7H23.3C10.5,46.9,0,57.4,0,70.2v356.7
+                         l87.7-228C90.1,190.1,98.8,183.5,108.6,183.5z" />
+                  </g>
+                </svg>
+              </div>
+              <div class="for-inline">{{folder.name}}</div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="folder-grid-item">
+              <span *ngFor="let tagFolder of folder.tagList">
+                #{{tagFolder}}
+              </span>
+            </div>
+          </div>
+          <button id="openRenameFolderModalButton" hidden="true" data-toggle="modal" data-target="#renameFolderModal">Переименовать</button>
+          <button id="openAddTagFolderModalButton" hidden="true" data-toggle="modal" data-target="#addTagFolderModal">Добавить тег</button>
+          <button id="openDeleteFolderModalButton" hidden="true" data-toggle="modal" data-target="#deleteFolderModal">Удалить папку</button>
+          <context-menu #static>
+            <ng-template contextMenuItem (execute)="openRenameFolderModal(folder.folderId)">
+              Переименовать
+            </ng-template>
+            <ng-template contextMenuItem (execute)="openAddTagFolderModal(folder.folderId)">
+              Добавить тег
+            </ng-template>
+            <ng-template contextMenuItem (execute)="callDownloadZIP(folder.folderId)">
+              Скачать ZIP-архив
+            </ng-template>
+            <ng-template contextMenuItem (execute)="openDeleteFolderModal(folder.folderId)">
+              Удалить папку
+            </ng-template>
+          </context-menu>
+        </div>
+      </button>
+    </div>
+
+
+
+    <button class="folder-grid col-sm-12 " *ngFor="let file of files">
+      <div [contextMenu]="static">
+        <div (click)="openImage(file.fileId)">
+          <div class="col-sm-9 just-for-padding">
+            <div class="folder-grid-item">
+              <div class="for-inline">
+                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                  viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="img-folder">
+                  <path class="st0" d="M503.2,53H8.8C4,53,0,56.9,0,61.8v388.4c0,4.9,4,8.8,8.8,8.8h494.3c4.9,0,8.8-3.9,8.8-8.8V61.8
+                         C512,56.9,508,53,503.2,53z M141.2,150.1c27.1,0,49.2,22.1,49.2,49.2c0,27.1-22.1,49.2-49.2,49.2s-49.2-22.1-49.2-49.2
+                         C92.1,172.1,114.1,150.1,141.2,150.1z M465.5,314.9c-3.3,3.6-8.9,3.8-12.5,0.5l-99.4-91.1l-81,88.8l42.4,42.4c3.5,3.5,3.5,9,0,12.5
+                         c-3.5,3.5-9,3.5-12.5,0l-90.9-90.9l-144,126.8c-1.7,1.5-3.8,2.2-5.8,2.2c-2.4,0-4.9-1-6.6-3c-3.2-3.7-2.9-9.2,0.8-12.5l150.2-132.3
+                         c3.5-3.1,8.8-2.9,12.1,0.4l41.9,41.9l86.5-94.7c1.6-1.7,3.8-2.8,6.1-2.9c2.3-0.1,4.6,0.7,6.4,2.3L465,302.5
+                         C468.6,305.8,468.8,311.3,465.5,314.9z" />
+                </svg>
+              </div>
+              <div class="for-inline">{{file.name}}</div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="folder-grid-item">
+              <span *ngFor="let tagFile of file.tagList">
+                #{{tagFile}}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <button id="openRenameFileModalButton" hidden="true" data-toggle="modal" data-target="#renameFileModal">Переименовать</button>
+        <button id="openAddTagFileModalButton" hidden="true" data-toggle="modal" data-target="#addTagFileModal">Добавить тег</button>
+        <button id="openDeleteFileModalButton" hidden="true" data-toggle="modal" data-target="#deleteFileModal">Удалить файл</button>
+        <context-menu #static>
+          <ng-template contextMenuItem (execute)="openRenameFileModal(file.fileId)">
+            Переименовать
+          </ng-template>
+          <ng-template contextMenuItem (execute)="openAddTagFileModal(file.fileId)">
+            Добавить тег
+          </ng-template>
+          <ng-template contextMenuItem (execute)="callDownload(file.fileId)">
+            Скачать файл
+          </ng-template>
+          <ng-template contextMenuItem (execute)="openDeleteFileModal(file.fileId)">
+            Удалить файл
+          </ng-template>
+        </context-menu>
+      </div>
+    </button>
+  </div>
+</div>
+
+<div class="col-sm-2">
+  <div class="button-group-right">
+    <div>
+      <button class="button-color" data-toggle="modal" data-target="#uploadFileModal">Загрузить файл</button>
+    </div>
+    <div>
+      <button class="button" data-toggle="modal" data-target="#createFolderModal">Создать папку</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="createFolderModal" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content custom-modal">
+      <div class="modal-header custom-header">
+        <h4 class="modal-title">Создание папки</h4>
+      </div>
+      <div class="modal-body">
+        <form name="form" (ngSubmit)="formCreate.form.valid && createfolder(formCreate)" #formCreate="ngForm" novalidate>
+          <div class="form-group">
+            <label for="foldername"></label>
+            <input type="text" class="form-control form-control-on-add-folder" name="foldername" placeholder="Имя папки" [(ngModel)]="model.foldername"
+              #foldername="ngModel" required maxlength="50" />
+            <div *ngIf="formCreate.submitted && !formCreate.valid" class="alerts">
+              Имя папки необходимо.
+            </div>
+            <!-- <div *ngIf="f.submitted && !name.valid" class="help-block">Имя пользователя необходимо</div> -->
+          </div>
+          <div class="form-group">
+            <button class="button-transparent" data-dismiss="modal" #closeCreateFolderModal>Отмена</button>
+            <button class="button-color">Готово</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="uploadFileModal" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content custom-modal">
+      <div class="modal-header custom-header">
+        <h4 class="modal-title">Загрузка файлов
+          <span class="img-tag">
+            <img src="assets\icons\reload.svg" class="img-tag pull-right" [class.rotating-animation-in-upload]="this.loading == true">
+          </span>
+        </h4>
+      </div>
+      <div class="modal-body modal-body-on-upload-files">
+        <div class="file_upload">
+          <button type="button">Выбрать</button>
+
+          <input type="file" #inputfiles (change)="onChange(inputfiles.files)" placeholder="Upload file" accept=".jpg,.png,.avi,.mov,.mkv"
+            multiple>
+        </div>
+        <table class="custom-table">
+
+          <tr *ngFor="let f of uploadFiles; let i = index">
+            <td>
+              <img src="assets\icons\success.svg" width="20" height="20" *ngIf="checkIfValid(f).length == 0">
+              <img src="assets\icons\minus.svg" width="20" height="20" *ngIf="checkIfValid(f).length > 0">
+            </td>
+            <td>
+              <img src="assets\icons\picture.svg" width="20" height="20" *ngIf="checkIfImage(f.name)">
+              <img src="assets\icons\video-player.svg" width="20" height="20" *ngIf="!checkIfImage(f.name)">
+            </td>
+            <td class="name-file-in-table">{{f.name}}
+              <div class="errors-in-upload">{{checkIfValid(f)}}</div>
+            </td>
+            <td>
+              <form name="form" #frm="ngForm" novalidate>
+                <div>
+                  <input type="text" class="form-control-on-upload-file" name="f.name-{{i}}" placeholder="+Добавить тег" [(ngModel)]="f.hashtag"
+                    #hashtag="ngModel" />
+                  <div *ngIf="hashtag.errors && (hashtag.dirty && hashtag.touched)" class="alerts">
+                    <br>
+                    <div [hidden]="!hashtag.errors">
+                      Введите корректный тег.
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </td>
+
+          </tr>
+
+        </table>
+        <div class="right-for-upload">
+          <button class="button-transparent" data-dismiss="modal" #closeUploadFileModal>Отмена</button>
+          <button class="button-color" (click)="uploadFile()">Готово</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="renameFolderModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content custom-modal">
+      <div class="modal-header custom-header">
+        <h4 class="modal-title">Переименовать папку</h4>
+      </div>
+      <div class="modal-body">
+        <form name="formrenamev" (ngSubmit)="formrename.valid && renamefolder(formrename)" #formrename="ngForm" novalidate>
+          <div class="form-group">
+            <label for="folderrename"></label>
+            <input type="text" class="form-control form-control-on-add-folder" name="folderrename" placeholder="Имя папки" [(ngModel)]="folderrenamem.name"
+              #folderrename="ngModel" required maxlength="50" />
+            <div *ngIf="formrename.submitted && !formrename.valid" class="alerts">
+              Имя папки необходимо.
+            </div>
+            <!-- <div *ngIf="f.submitted && !name.valid" class="help-block">Имя пользователя необходимо</div> -->
+          </div>
+          <div class="form-group">
+            <button class="button-transparent" data-dismiss="modal" #closeRenameFolderModal>Отмена</button>
+            <button class="button-color">Готово</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addTagFolderModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content custom-modal">
+      <div class="modal-header custom-header">
+        <h4 class="modal-title">Добавить тег
+          <span class="img-tag">
+            <img src="assets\icons\tag-black-shape.svg" class="img-tag pull-right">
+          </span>
+        </h4>
+      </div>
+      <div class="modal-body">
+
+        <form name="formAddTags" (ngSubmit)="formAT.valid && addTags(formAT)" #formAT="ngForm" novalidate>
+          <div class="form-group">
+            <label for="tags"></label>
+            <textarea cols="40" rows="5" class="form-control huge-input" [(ngModel)]="model.tags" name="tags" id="tags" #tags="ngModel"
+              required></textarea>
+
+            <div *ngIf="formAT.submitted && !formAT.valid" class="alerts">
+              Теги необходимы.
+            </div>
+          </div>
+          <div class="form-group right">
+            <div [hidden]="true">
+              <button class="button-transparent" data-dismiss="modal" #closeAddTagFolderModal>Отмена</button>
+            </div>
+            <span class="max-tag-text pull-left">Максимальное
+              <br>количество тегов - 200</span>
+            <button class="button-color">Добавить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteFolderModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content custom-modal">
+      <div class="modal-body" padding="30">
+        <div class="text-deleted">Вы уверенны, что хотите удалить эту папку?</div>
+        <div class="form-group">
+          <button class="button-color" data-dismiss="modal" #closeDeleteFolderModal>Ой, нет!</button>
+          <button class="button-transparent" (click)="deleteFolder()">Да, удалить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- files -->
+
+<!-- Modal -->
+<div class="modal fade" id="renameFileModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content custom-modal">
+      <div class="modal-header custom-header">
+        <h4 class="modal-title">Переименовать файл</h4>
+      </div>
+      <div class="modal-body">
+        <form name="formrenamev" (ngSubmit)="formrenameFile.valid && renameFile(formrenameFile)" #formrenameFile="ngForm" novalidate>
+          <div class="form-group">
+            <label for="folderrename"></label>
+            <input type="text" class="form-control form-control-on-add-folder" name="renameFile" placeholder="Имя файла" [(ngModel)]="model.renameFile"
+              #folderrename="ngModel" required maxlength="47" />
+            <div *ngIf="formrenameFile.submitted && !formrenameFile.valid" class="alerts">
+              Имя файла необходимо.
+            </div>
+            <!-- <div *ngIf="f.submitted && !name.valid" class="help-block">Имя пользователя необходимо</div> -->
+          </div>
+          <div class="form-group">
+            <button class="button-transparent" data-dismiss="modal" #closeRenameFileModal>Отмена</button>
+            <button class="button-color">Готово</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addTagFileModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content custom-modal">
+      <div class="modal-header custom-header">
+        <h4 class="modal-title">Добавить тег
+          <span class="img-tag">
+            <img src="assets\icons\tag-black-shape.svg" class="img-tag pull-right">
+          </span>
+        </h4>
+      </div>
+      <div class="modal-body">
+
+        <form name="form" (ngSubmit)="f.form.valid && addTagsFile(f)" #f="ngForm" novalidate>
+          <div class="form-group">
+            <label for="tags"></label>
+            <textarea cols="40" rows="5" class="form-control huge-input" [(ngModel)]="model.tags" name="tags" id="tags" #tags="ngModel"
+              required></textarea>
+
+            <div *ngIf="f.submitted && !f.valid" class="alerts">Теги необходимы</div>
+          </div>
+          <div class="form-group right">
+            <div [hidden]="true">
+              <button class="button-transparent" data-dismiss="modal" #closeAddTagFileModal>Отмена</button>
+            </div>
+            <span class="max-tag-text pull-left">Максимальное
+              <br>количество тегов - 200</span>
+            <button class="button-color">Добавить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteFileModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content custom-modal">
+      <div class="modal-body" padding="30">
+        <div class="text-deleted">Вы уверенны, что хотите удалить этот файл?</div>
+        <div class="form-group">
+          <button class="button-color" data-dismiss="modal" #closeDeleteFileModal>Ой, нет!</button>
+          <button class="button-transparent" (click)="deleteFile()">Да, удалить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<simple-notifications [options]="options"></simple-notifications>
+
+<div *ngIf="showImage" class="carousel" role="dialog">
+  <div class="right-side">
+    <div (click)="this.showImage = false; this.srccarouselc='assets\\icons\\cancel.svg'" class="cancel-area" (mouseenter)="mouse('srccarouselc', 'assets\\icons\\cancel-hover.svg')"
+      (mouseleave)="mouse('srccarouselc', 'assets\\icons\\cancel.svg')">
+      <img [src]="this.srccarouselc" class="cancel-button">
+    </div>
+    <div *ngIf="this.files[(this.getIfromId(this.fileToShow.fileId)*1 + 1)]" class="navigation-right-area" (click)="openImage(this.files[(this.getIfromId(this.fileToShow.fileId)*1 + 1)].fileId)"
+      (mouseenter)="mouse('srccarouselr', 'assets\\icons\\next-hover.svg')" (mouseleave)="mouse('srccarouselr', 'assets\\icons\\next.svg')">
+      <img [src]="this.srccarouselr" class="right-button">
+    </div>
+  </div>
+  <div>
+
+    <div *ngIf="this.files[(this.getIfromId(this.fileToShow.fileId) - 1)]; else placeForLeft" (click)="openImage(this.files[(this.getIfromId(this.fileToShow.fileId) - 1)].fileId)"
+      (mouseenter)="mouse('srccarousell', 'assets\\icons\\next-hover.svg')" (mouseleave)="mouse('srccarousell', 'assets\\icons\\next.svg')"
+      class="navigation-left-area">
+      <img [src]="this.srccarousell" class="left-button rotateimg180">
+    </div>
+    <ng-template #placeForLeft>
+      <div class="navigation-left-area"></div>
+    </ng-template>
+  </div>
+
+  <div class="middle">
+    <div class="whiteblock">
+      <span class="modal-title pull-left">{{this.fileToShow.name}}
+        <br>{{this.fileToShow.size | bytes}}</span>
+      <button class="button-color pull-right" (click)="callDownload(this.fileToShow.fileId)">Скачать</button>
+      <div class="image-container">
+        <img [src]="this.sanitize(URL)" [class.rotating-animation]="this.URL == 'assets\\icons\\reload.svg'">
+      </div>
+      <div class="carousel-tags">
+        <span *ngFor="let tag of this.fileToShow.tagList">
+          #{{tag}}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,150 @@
 /* You can add global styles to this file, and also import other style files */
+html, body {
+    min-height: 100vh ;
+    margin: 0;
+    background-color: #f0f1f7 !important;
+}
+
+body.modal-open[style="padding-right: 17px;"] 
+{
+  padding-right: 0px !important;
+}
+
+body.modal-open[style="padding-right: 19px;"] 
+{
+  padding-right: 0px !important;
+}
+
+body.modal-open
+{
+  padding-right: 0px !important;
+}
+
+html{
+  overflow-x: auto !important;
+  min-width: 1420px !important;
+  padding-right: 0px !important;
+  height: 100%;
+}
+
+@font-face {
+  font-family: 'Raleway-Black';
+  src: URL('assets/Raleway/Raleway-Black.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-BlackItalic';
+  src: URL('assets/Raleway/Raleway-BlackItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-Bold';
+  src: URL('assets/Raleway/Raleway-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-BoldItalic';
+  src: URL('assets/Raleway/Raleway-BoldItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-ExtraBold';
+  src: URL('assets/Raleway/Raleway-ExtraBold.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-ExtraBoldItalic';
+  src: URL('assets/Raleway/Raleway-ExtraBoldItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-ExtraLight';
+  src: URL('assets/Raleway/Raleway-ExtraLight.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-ExtraLightItalic';
+  src: URL('assets/Raleway/Raleway-ExtraLightItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-Italic';
+  src: URL('assets/Raleway/Raleway-Italic.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-Light';
+  src: URL('assets/Raleway/Raleway-Light.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-LightItalic';
+  src: URL('assets/Raleway/Raleway-LightItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-Medium';
+  src: URL('assets/Raleway/Raleway-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-MediumItalic';
+  src: URL('assets/Raleway/Raleway-MediumItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-Regular';
+  src: URL('assets/Raleway/Raleway-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-SemiBold';
+  src: URL('assets/Raleway/Raleway-SemiBold.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-SemiBoldItalic';
+  src: URL('assets/Raleway/Raleway-SemiBoldItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-Thin';
+  src: URL('assets/Raleway/Raleway-Thin.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway-ThinItalic';
+  src: URL('assets/Raleway/Raleway-ThinItalic.ttf');
+}
+
+.ngx-contextmenu .dropdown-menu>li>a {
+  border: solid 1px  none;
+  background-color: white;
+  padding: 5px;
+  padding-left: 40px;
+  color:  #7a7a7a;
+  font-family: Raleway-Bold;
+  letter-spacing: 1px ;
+  font-size: 1em;
+  width: 250px;
+}
+.ngx-contextmenu li {
+  display: block;
+  border-top: solid 1px #C2C2C2;
+  text-align: left;
+}
+.ngx-contextmenu li:first-child {
+  border-top:none;
+}
+.ngx-contextmenu a {
+  color: #C2C2C2;
+  display: block;
+  padding: 0.5em 1em;
+}
+.ngx-contextmenu a:hover {
+  color:#7a7a7a;
+  background-color:#C2C2C2;
+}
+
+
+

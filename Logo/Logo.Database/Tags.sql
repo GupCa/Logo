@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[Tags]
-(
-	[TagID] INT NOT NULL PRIMARY KEY,
+( 
+    [TagID]   uniqueidentifier NOT NULL DEFAULT newid() PRIMARY KEY,
 	[Name] nvarchar(200)
 )

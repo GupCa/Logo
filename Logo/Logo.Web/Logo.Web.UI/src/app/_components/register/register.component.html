@@ -1,0 +1,74 @@
+<div class="container fill vertical-align">
+
+    <div>
+        <div class="title">
+            <p class="logo">logo</p>
+            <p class="welcome">Добро пожаловать!</p>
+        </div>
+        <div class="whiteblock">
+            <div class="textchoose">
+                <p class="login">Зарегистрируйтесь</p>
+                <div>
+                    <p class="register">или
+                        <a [routerLink]="['/login']" class="link">Войдите в свой аккаунт</a>
+                    </p>
+                </div>
+            </div>
+            <form name="form" (ngSubmit)="f.form.valid && register()" #f="ngForm" novalidate>
+                <div class="form-group">
+                    <label for="name"></label>
+                    <input type="text" class="form-control" name="name" placeholder="Имя пользователя" [(ngModel)]="model.name" #name="ngModel"
+                        required maxlength="50" />
+                    <div *ngIf="name.errors && (name.dirty && name.touched)" class="alerts">
+                        <br>
+                        <div [hidden]="!name.errors.required">
+                            Имя пользователя необходимо.
+                        </div>
+                        <div [hidden]="!name.errors.maxlength">
+                            Максимальная длинна имени 50 символов.
+                        </div>
+                    </div>
+                    <!-- <div *ngIf="f.submitted && !name.valid" class="help-block">Имя пользователя необходимо</div> -->
+                </div>
+                <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !email.valid }">
+                    <label for="email"></label>
+                    <input type="email" class="form-control" name="email" placeholder="E-mail" [(ngModel)]="model.email" #email="ngModel" required
+                        email />
+                    <div *ngIf="email.errors && (email.dirty && email.touched)" class="alerts">
+                        <br>
+                        <div [hidden]="!email.errors.required">
+                            Email необходим.
+                        </div>
+                        <div [hidden]="!email.errors.email">
+                            Введите корректный email.
+                        </div>
+                    </div>
+                    <!-- <div *ngIf="f.submitted && !email.valid" class="help-block">E-mail необходим</div> -->
+                </div>
+                <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+                    <label for="password"></label>
+                    <input type="password" class="form-control" name="password" placeholder="Пароль" [(ngModel)]="model.password" #password="ngModel"
+                        required minlength="6" maxlength="50" />
+                    <div *ngIf="password.errors && (password.dirty && password.touched)" class="alerts">
+                        <br>
+                        <div [hidden]="!password.errors.required">
+                            Пароль необходим.
+                        </div>
+                        <div [hidden]="!password.errors.minlength">
+                            Минимальная длинна пароля 6 символов.
+                        </div>
+                        <div [hidden]="!password.errors.maxlength">
+                            Максимальная длинна пароля 50 символов.
+                        </div>
+                    </div>
+                    <!-- <div *ngIf="f.submitted && !password.valid" class="help-block">Пароль необходим</div> -->
+                </div>
+                <div class="form-group">
+                    <button [disabled]="loading" class="button">Зарегистрироваться</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<simple-notifications [options]="options"></simple-notifications>
