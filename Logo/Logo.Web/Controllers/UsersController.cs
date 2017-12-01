@@ -7,7 +7,6 @@ using Logo.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
-
 using Logo.Implementation;
 
 namespace Logo.Web.Controllers
@@ -24,15 +23,11 @@ namespace Logo.Web.Controllers
             _usersService = usersService;
             _cryptographyService = cryptographyService;
         }
-
-        //[HttpPost("auth-token")]
         
         [HttpPost]
         [Route("auth-token")]
         public IActionResult GetUserInfoWithToken([FromBody]UserCredentials userCredentials)
         {
-
-
             UserInfo user = null;
             try
             {
@@ -47,7 +42,6 @@ namespace Logo.Web.Controllers
             {
                 return Json(new { success = false, message = ex.Message });    
             }
-
 
             var handler = new JwtSecurityTokenHandler();
 
@@ -66,8 +60,6 @@ namespace Logo.Web.Controllers
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(symmetricKey), SecurityAlgorithms.HmacSha256Signature),
                 Subject = identity
             });
-
-
            
             var userInfoWithToken = new UserInfoWithToken
             {
@@ -79,23 +71,15 @@ namespace Logo.Web.Controllers
                     Id = user.Id
                 }
             };
-
             return  Ok(userInfoWithToken);
         }
-
-
-        //[HttpPost("add-user")]
-
+       
         [HttpPost]
         [Route("add-user")]
         public IActionResult AddUser([FromBody]UserCredentialsWithName userCredentialsWithName)
-        {
-            // string encryptedPassword = _cryptographyService.RSAEncryptData(password);            
-            //if (_usersService.ValidateUserCredentials(userData))
-
+        {      
             UserFullInformation userFullInformation = new UserFullInformation
             {
-                //UserId = Guid.NewGuid(),
                 Email = userCredentialsWithName.Email,
                 Password = userCredentialsWithName.Password,
                 Name = userCredentialsWithName.Name
@@ -107,18 +91,15 @@ namespace Logo.Web.Controllers
                 {
                     _usersService.AddUser(userCredentialsWithName);
                 }
-
                 else
                 {
                     throw new InvalidOperationException("Неверный логин или пароль");
                 }
             }
-
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });    
             }
-
             return Ok();       
         }
     }

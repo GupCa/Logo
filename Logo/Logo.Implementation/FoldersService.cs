@@ -5,6 +5,7 @@ using Logo.Contracts.Services;
 using Logo.Implementation.DatabaseModels;
 using System.Collections.Generic;
 using System.IO;
+using System.Globalization;
 
 namespace Logo.Implementation
 {
@@ -60,7 +61,6 @@ namespace Logo.Implementation
 
             folderInfo.TagList = _tagsService.GetFolderTags(folderId);
 
-
             return folderInfo;
         }
 
@@ -90,7 +90,6 @@ namespace Logo.Implementation
 
             return fileInfo;
         }
-
 
         public void CreateFolder(ObjectCredentialsWithOwner folderCredentialsWithOwner)
         {
@@ -122,16 +121,13 @@ namespace Logo.Implementation
                     HasPublicAccess = false
                 });
 
-
             _dbContext.SaveChanges();
         }
-
 
         public  string GetFileExstention(string fileName)
         {
             return fileName.Substring(fileName.LastIndexOf('.') + 1);
         }
-
 
         public  int GetFileType(string fileExtention)
         {
@@ -151,67 +147,65 @@ namespace Logo.Implementation
             return type;
         }
 
+        public  string  GetFileTypeString(int  type)
+        {
+            if (type == 0) return "jpg";
+            else if (type == 1) return "png";
+            else if (type == 2) return "mov";
+            else if (type == 3) return "avi";
+            else if (type == 4) return "mkv";
+            return "";
+        }
+
         public Guid CreateFile(ObjectCredentialsWithOwner fileCredentialsWithOwner)
         {
-            if (IsParentContainseFolder(fileCredentialsWithOwner) || IsParentContainseFile(fileCredentialsWithOwner))
-                throw new InvalidOperationException("Файл или папка с этим именем уже существуют");
-
             string fileName = fileCredentialsWithOwner.ObjectCredentials.Name;
-            string fileExtention = GetFileExstention(fileCredentialsWithOwner.ObjectCredentials.Name);
-
+            string fileExtention = GetFileExstention(fileName);
             int fileType = GetFileType(fileExtention);
 
-            if (fileType != -1)
+            if (fileType == -1)
             {
-               
-                Guid fileId = Guid.NewGuid();   //this value   is  name of file in   blockblob
-                DateTime dateTime = Convert.ToDateTime(fileCredentialsWithOwner.ObjectCredentials.CreationDate);
-
-
-                _dbContext.Files.Add
-                    (new DatabaseModels.File
-                    {
-                        FileId = fileId,
-                        OwnerId = fileCredentialsWithOwner.OwnerId,
-                        ParentFolderId = fileCredentialsWithOwner.ObjectCredentials.ParentObjectId,
-                        Name = fileCredentialsWithOwner.ObjectCredentials.Name,
-                        CreationDate = Convert.ToDateTime(fileCredentialsWithOwner.ObjectCredentials.CreationDate),
-                        UploadDate = DateTime.Now,
-                        Size = (int)fileCredentialsWithOwner.ObjectCredentials.Size,
-                        Type = fileType,
-                        HasPublicAccess = false,
-
-                        ImageStorage = null
-                    });
-
-                _dbContext.SaveChanges();
-
-                _tagsService.CreateTagToFile(new TagsCredentials
-                {
-                    ObjectId = fileId,
-                    Text = fileCredentialsWithOwner.ObjectCredentials.Tags
-                });
-
-
-                _dbContext.SaveChanges();
-
-                return fileId;
+                throw new InvalidOperationException("Расширение файла недопустимо");
             }
 
-            else
-                throw new InvalidOperationException("Расширение файла недопустимо");
+            if (IsParentContainseFolder(fileCredentialsWithOwner) || IsParentContainseFile(fileCredentialsWithOwner))
+            {
+                throw new InvalidOperationException("Файл или папка с этим именем уже существуют");
+            }
+            
+            Guid fileId = Guid.NewGuid();   //this value   is  name of file in   blockblob
+            _dbContext.Files.Add
+                (new DatabaseModels.File
+                {
+                    FileId = fileId,
+                    OwnerId = fileCredentialsWithOwner.OwnerId,
+                    ParentFolderId = fileCredentialsWithOwner.ObjectCredentials.ParentObjectId,
+                    Name = fileCredentialsWithOwner.ObjectCredentials.Name,
+                    CreationDate = fileCredentialsWithOwner.ObjectCredentials.CreationDate,
+                    UploadDate = DateTime.Now,
+                    Size = (int)fileCredentialsWithOwner.ObjectCredentials.Size,
+                    Type = fileType,
+                    HasPublicAccess = false,
+
+                    ImageStorage = null
+                });
+
+            _dbContext.SaveChanges();
+            _tagsService.CreateTagToFile(new TagsCredentials
+            {
+                ObjectId = fileId,
+                Text = fileCredentialsWithOwner.ObjectCredentials.Tags
+            });
+
+            return fileId;                     
         }
 
         public void RenameFolder(UpdatedObject updatedFolder)
         {
-
             if (updatedFolder.updatedName.Length > maxNameLong)
                 throw new InvalidOperationException(String.Format("Длина имени превышает {0}", maxNameLong));
 
-
             FolderInfo folder = GetFolder(updatedFolder.ObjectId);
-
-
 
             ObjectCredentialsWithOwner folderCredentialsWithOwner = new ObjectCredentialsWithOwner
             {
@@ -224,32 +218,31 @@ namespace Logo.Implementation
                 OwnerId = folder.OwnerId
             };
 
-
             if (IsParentContainseFolder(folderCredentialsWithOwner) || IsParentContainseFile(folderCredentialsWithOwner))
             {
                 throw new InvalidOperationException("Файл или папка с этим именем уже существуют");
-
             }
 
-            _dbContext.Folders.Where(f => f.FolderId == updatedFolder.ObjectId).FirstOrDefault().Name = updatedFolder.updatedName;
-
+            _dbContext
+                .Folders
+                .Where(f => f.FolderId == updatedFolder.ObjectId)
+                .FirstOrDefault()
+                .Name = updatedFolder.updatedName;
             _dbContext.SaveChanges();
         }
 
-
         public void RenameFile(UpdatedObject updatedFile)
-        {
-           
+        {  
             Contracts.FileInfo file = GetFile(updatedFile.ObjectId);
+            string extention = GetFileTypeString(file.Type);
 
             ObjectCredentialsWithOwner fileCredentialsWithOwner = new ObjectCredentialsWithOwner
             {
                 ObjectCredentials = new ObjectCredentials
                 {
                     ParentObjectId = file.ParentFolderId,
-                    Name = updatedFile.updatedName,
+                    Name = updatedFile.updatedName + "." + extention
                 },
-
                 OwnerId = file.OwnerId
             };
 
@@ -260,7 +253,7 @@ namespace Logo.Implementation
 
             _dbContext.Files
                 .Where(f => f.FileId == updatedFile.ObjectId)
-                .FirstOrDefault().Name = updatedFile.updatedName;
+                .FirstOrDefault().Name = fileCredentialsWithOwner.ObjectCredentials.Name;
 
             _dbContext.SaveChanges();
         }
@@ -559,31 +552,21 @@ namespace Logo.Implementation
         }
 
         
-        public List<Guid>  GetAllFilesFromDirectory(Guid folderId,   List<Guid> filesList )
-        {           
-            List<Guid> filesInFolder = _dbContext
-                .Files
-                .Where(t => t.ParentFolderId == folderId)
-                .Select(t => t.FileId)
-                .ToList();
 
-            List<Guid> foldersInFolder = _dbContext
-                .Folders
-                .Where(t => t.ParentFolderId == folderId)
-                .Select(t => t.FolderId)
-                .ToList();
-
-            foreach (var file in filesInFolder)
+        public DateTime ParseDate(string date)
+        {
+            DateTime parsedDate;              
+            try
+            {                
+                DateTime.TryParse(date, out parsedDate);
+            }
+            catch (FormatException)
             {
-                filesList.Add(file);
+                parsedDate = DateTime.Now;
+                return parsedDate;
             }
 
-            foreach (var   folder in  foldersInFolder)
-            {
-                GetAllFilesFromDirectory(folder, filesList);
-            }
-
-            return filesList;
+            return parsedDate;
         }
     }
 }

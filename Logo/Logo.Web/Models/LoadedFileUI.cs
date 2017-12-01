@@ -14,7 +14,7 @@ namespace Logo.Web.Models
 
         public  Guid ? ParentFolderId { get; set; }
 
-        public DateTime  CreationDate { get; set; }
+        public string  CreationDate { get; set; }
 
         public  string  Tags { get; set; }        
     }

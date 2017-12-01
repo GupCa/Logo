@@ -15,11 +15,13 @@ namespace Logo.Contracts.Services
         IEnumerable<FileInfo> GetRootFiles(Guid ownerId);
         FileInfo GetFile(Guid fileId);
         Guid CreateFile(ObjectCredentialsWithOwner folderCredentials);  
+        
         void RenameFile(UpdatedObject updatedFolder);
         void DeleteFile(Guid folderId);
 
         string GetFileExstention(string fileName);
 
+        DateTime ParseDate(string date);
 
         IEnumerable<FolderInfo> GetPathToRoot(Guid FolderId);
 
