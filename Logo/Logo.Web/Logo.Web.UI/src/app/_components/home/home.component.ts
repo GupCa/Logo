@@ -419,7 +419,7 @@ export class HomeComponent implements OnInit {
         this.selectedObjectId = fileId;
     }
 
-    search(searchModel) {
+    search(searchModel: any) {
         this.homeService.search(searchModel.text, searchModel.fileTypeSearch)
             .subscribe(
             data => {
@@ -430,6 +430,15 @@ export class HomeComponent implements OnInit {
                     console.log('seacrh successfull');
                 }
                 this.files = data as FileCustom[];
+                for (let file of this.files) {
+                    if (this.checkIfJpg(file.name) == true) {
+                        file.resizedImage = 'data:image/jpg;base64,' + file.resizedImage;
+                    }
+                    else {
+                        file.resizedImage = 'data:image/png;base64,' + file.resizedImage;
+                    }
+                    
+                }
                 this.folders = [];
             },
             error => {

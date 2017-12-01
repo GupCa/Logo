@@ -90,15 +90,6 @@ export class DataComponent implements OnInit {
         }
     }
 
-
-    //this.loadRootFiles();
-
-    // ngOnInit() {
-    //     this.loadRootFolders();
-    //     this.loadRootFiles();
-    //     this.grid = true;
-    // }
-
     //initial
     private loadFolders() {
         this.homeService.loadFolders(this.folderId).subscribe(
@@ -136,7 +127,6 @@ export class DataComponent implements OnInit {
                         else {
                             file.resizedImage = 'data:image/png;base64,' + file.resizedImage;
                         }
-                        console.log(file.resizedImage)
                     }
                 }
             },
@@ -440,6 +430,15 @@ export class DataComponent implements OnInit {
                     console.log('seacrh successfull');
                 }
                 this.files = data as FileCustom[];
+                for (let file of this.files) {
+                    if (this.checkIfJpg(file.name) == true) {
+                        file.resizedImage = 'data:image/jpg;base64,' + file.resizedImage;
+                    }
+                    else {
+                        file.resizedImage = 'data:image/png;base64,' + file.resizedImage;
+                    }
+                    
+                }
                 this.folders = [];
             },
             error => {

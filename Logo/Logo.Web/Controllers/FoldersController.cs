@@ -321,7 +321,7 @@ namespace Logo.Web.Controllers
 
         [HttpPost]
         [Route("search-tag")]
-        public IEnumerable<FileInfo> SearchFilesOnTag([FromBody]string tagName)
+        public IEnumerable<FileInfo> SearchFilesOnTag([FromBody] ObjectSearch objectSearch)
         {
             Guid ownerId = new Guid(HttpContext.User.Claims.ToList()
                                   .Where(item => item.Type == "UserId")
@@ -329,7 +329,7 @@ namespace Logo.Web.Controllers
                                   .FirstOrDefault());
             try
             {
-                return _foldersService.SearchFilesOnTag(tagName, ownerId);
+                return _foldersService.SearchFilesOnTag(objectSearch.Name, ownerId);
             }
 
             catch (Exception )

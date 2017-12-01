@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response, ResponseContentType } from '@angular/http';
 import { Folder } from './folder';
 import { TagsInfo } from './tagsInfo';
+import { SearchModel } from './searchModel';
 import { FolderNameWithParentFolderId } from './folderNameWithParentFolderId';
 import { FileNameWithFolderIdWithDate } from './fileNameWithFolderIdWithDate';
 import { UpdatedObject } from './updatedObject';
@@ -13,11 +14,15 @@ export class HomeService {
   constructor(private http: Http) { }
 
   search(textToSearh: string, typeFileSearch: boolean) {
+    
+    let searchModel: SearchModel = {
+      name: textToSearh,
+    };
     if (typeFileSearch) {
-      return this.http.post('/api/folders/search-name', textToSearh, this.jwt()).map(this.extractData);
+      return this.http.post('/api/folders/search-name', searchModel, this.jwt()).map(this.extractData);
     }
     else {
-      return this.http.post('/api/folders/search-tag', textToSearh, this.jwt()).map(this.extractData);
+      return this.http.post('/api/folders/search-tag', searchModel, this.jwt()).map(this.extractData);
     }
   }
 
