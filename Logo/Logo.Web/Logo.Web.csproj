@@ -11,6 +11,9 @@
     <None Remove="Logo.Web.UI\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Properties\PublishProfiles\logo-app - Web Deploy.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
