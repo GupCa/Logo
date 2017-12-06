@@ -1,5 +1,5 @@
 # Logo
-LOGO Project using ASP.NET Core 2.0 WEB.API + Angular 4 http://logo-app.azurewebsites.net
+LOGO Project using ASP.NET Core 2.0 WEB.API + Angular 4 https://logo-app.azurewebsites.net
 
 To install run this:
 ``` npm
